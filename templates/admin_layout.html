@@ -1,0 +1,279 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- 侧边栏 -->
+        <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link {{ 'active' if request.endpoint == 'admin.dashboard' }}" 
+                           href="{{ url_for('admin.dashboard') }}">
+                            <i class="fas fa-tachometer-alt"></i>
+                            仪表板
+                        </a>
+                    </li>
+                    
+                    {% if current_user.is_super() %}
+                    <li class="nav-item">
+                        <a class="nav-link {{ 'active' if request.endpoint == 'admin.users' }}" 
+                           href="{{ url_for('admin.users') }}">
+                            <i class="fas fa-users"></i>
+                            用户管理
+                            <span class="badge bg-danger ms-2">Super</span>
+                        </a>
+                    </li>
+                    {% endif %}
+                    
+                    <li class="nav-item">
+                        <a class="nav-link {{ 'active' if request.endpoint == 'admin.stores' }}" 
+                           href="{{ url_for('admin.stores') }}">
+                            <i class="fas fa-store"></i>
+                            门店管理
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link {{ 'active' if request.endpoint == 'admin.data' }}" 
+                           href="{{ url_for('admin.data') }}">
+                            <i class="fas fa-box"></i>
+                            基础数据
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link {{ 'active' if request.endpoint == 'admin.data2' }}" 
+                           href="{{ url_for('admin.data2') }}">
+                            <i class="fas fa-shopping-cart"></i>
+                            采购订单
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showAlibabaIntegration()">
+                            <i class="fab fa-alipay"></i>
+                            阿里巴巴集成
+                            <span class="badge bg-warning ms-2">API</span>
+                        </a>
+                    </li>
+                    
+                    <hr class="my-3">
+                    
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showDataExport()">
+                            <i class="fas fa-download"></i>
+                            数据导出
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showDataImport()">
+                            <i class="fas fa-upload"></i>
+                            数据导入
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showApiDocs()">
+                            <i class="fas fa-code"></i>
+                            API文档
+                        </a>
+                    </li>
+                    
+                    <hr class="my-3">
+                    
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.profile') }}">
+                            <i class="fas fa-user"></i>
+                            个人资料
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showHelp()">
+                            <i class="fas fa-question-circle"></i>
+                            帮助文档
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- 主要内容区域 -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="main-content">
+                {% block admin_content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- 数据导出模态框 -->
+<div class="modal fade" id="exportModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">数据导出</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>选择要导出的数据类型：</p>
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('admin.export_data', data_type='products') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-box me-2"></i>商品数据
+                    </a>
+                    <a href="{{ url_for('admin.export_data', data_type='orders') }}" class="btn btn-outline-success">
+                        <i class="fas fa-shopping-cart me-2"></i>订单数据
+                    </a>
+                    <a href="{{ url_for('admin.export_data', data_type='stores') }}" class="btn btn-outline-info">
+                        <i class="fas fa-store me-2"></i>门店数据
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 数据导入模态框 -->
+<div class="modal fade" id="importModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">数据导入</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="importType" class="form-label">选择导入类型：</label>
+                    <select class="form-select" id="importType">
+                        <option value="products">商品数据</option>
+                        <option value="orders">订单数据</option>
+                    </select>
+                </div>
+                
+                <form id="importForm" method="POST" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="importFile" class="form-label">选择Excel文件：</label>
+                        <input type="file" class="form-control" id="importFile" name="file" 
+                               accept=".xlsx,.xls" required>
+                        <div class="form-text">
+                            支持格式：.xlsx, .xls（最大10MB）
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        请确保Excel文件包含正确的列标题，系统会自动匹配对应字段。
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-upload me-2"></i>开始导入
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- API文档模态框 -->
+<div class="modal fade" id="apiDocsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">API文档</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <h6>认证方式</h6>
+                <p>所有API请求需要在Header中包含认证令牌：</p>
+                <pre class="bg-light p-3"><code>Authorization: Bearer {token}</code></pre>
+                
+                <h6 class="mt-4">获取令牌</h6>
+                <pre class="bg-light p-3"><code>POST /api/auth/login
+Content-Type: application/json
+
+{
+    "username": "your_username",
+    "password": "your_password"
+}</code></pre>
+                
+                <h6 class="mt-4">常用接口</h6>
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <strong>GET /api/stores</strong> - 获取门店列表
+                    </li>
+                    <li class="list-group-item">
+                        <strong>GET /api/products</strong> - 获取商品列表
+                    </li>
+                    <li class="list-group-item">
+                        <strong>GET /api/orders</strong> - 获取订单列表
+                    </li>
+                    <li class="list-group-item">
+                        <strong>POST /api/orders</strong> - 创建新订单
+                    </li>
+                    <li class="list-group-item">
+                        <strong>PUT /api/orders/{id}/status</strong> - 更新订单状态
+                    </li>
+                </ul>
+                
+                <div class="mt-3">
+                    <a href="#" class="btn btn-outline-primary">查看完整API文档</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// 显示数据导出模态框
+function showDataExport() {
+    const modal = new bootstrap.Modal(document.getElementById('exportModal'));
+    modal.show();
+}
+
+// 显示数据导入模态框
+function showDataImport() {
+    const modal = new bootstrap.Modal(document.getElementById('importModal'));
+    modal.show();
+}
+
+// 显示API文档模态框
+function showApiDocs() {
+    const modal = new bootstrap.Modal(document.getElementById('apiDocsModal'));
+    modal.show();
+}
+
+// 显示阿里巴巴集成（可以扩展为专门的页面）
+function showAlibabaIntegration() {
+    alert('阿里巴巴API集成功能正在完善中...\n\n当前支持：\n- 商品信息查询\n- 自动下单\n- 物流信息同步');
+}
+
+// 显示帮助文档
+function showHelp() {
+    alert('帮助文档\n\n1. 基础数据管理：管理商品SKU、价格等信息\n2. 门店管理：添加和管理多个门店\n3. 采购订单：创建和跟踪采购订单\n4. 数据导入导出：批量操作数据\n5. API集成：支持外部应用调用');
+}
+
+// 处理导入表单提交
+document.getElementById('importForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const importType = document.getElementById('importType').value;
+    const fileInput = document.getElementById('importFile');
+    
+    if (!fileInput.files[0]) {
+        alert('请选择要导入的文件');
+        return;
+    }
+    
+    const formData = new FormData();
+    formData.append('file', fileInput.files[0]);
+    
+    // 根据导入类型设置不同的提交URL
+    this.action = `/admin/import/${importType}`;
+    this.submit();
+});
+</script>
+{% endblock %}

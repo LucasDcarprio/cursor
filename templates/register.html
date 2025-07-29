@@ -1,0 +1,326 @@
+{% extends "base.html" %}
+
+{% block title %}用户注册 - 泓枢智创{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7">
+            <div class="card shadow-lg border-0 mt-4">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-user-plus fa-3x text-primary mb-3"></i>
+                        <h2 class="fw-bold">用户注册</h2>
+                        <p class="text-muted">立即注册，开启智慧采购管理之旅</p>
+                    </div>
+                    
+                    <form method="POST" id="registerForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="username" class="form-label">用户名 <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-user"></i>
+                                        </span>
+                                        <input type="text" class="form-control" id="username" name="username" 
+                                               placeholder="用户名（3-20个字符）" required>
+                                    </div>
+                                    <small class="form-text text-muted">用户名将作为登录凭证，请妥善保管</small>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="phone" class="form-label">手机号 <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-phone"></i>
+                                        </span>
+                                        <input type="tel" class="form-control" id="phone" name="phone" 
+                                               placeholder="请输入手机号" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="password" class="form-label">密码 <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-lock"></i>
+                                        </span>
+                                        <input type="password" class="form-control" id="password" name="password" 
+                                               placeholder="密码（6-20个字符）" required>
+                                        <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('password')">
+                                            <i class="fas fa-eye" id="passwordToggle"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="confirmPassword" class="form-label">确认密码 <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-lock"></i>
+                                        </span>
+                                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" 
+                                               placeholder="请再次输入密码" required>
+                                        <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('confirmPassword')">
+                                            <i class="fas fa-eye" id="confirmPasswordToggle"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <hr class="my-4">
+                        <h5 class="mb-3">企业信息</h5>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="brand_name" class="form-label">品牌名称 <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-building"></i>
+                                        </span>
+                                        <input type="text" class="form-control" id="brand_name" name="brand_name" 
+                                               placeholder="请输入品牌名称" required>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="store_name" class="form-label">店铺名称 <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fas fa-store"></i>
+                                        </span>
+                                        <input type="text" class="form-control" id="store_name" name="store_name" 
+                                               placeholder="请输入店铺名称" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="store_id" class="form-label">店铺ID <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fas fa-id-card"></i>
+                                </span>
+                                <input type="text" class="form-control" id="store_id" name="store_id" 
+                                       placeholder="请输入店铺ID（用于系统识别）" required>
+                            </div>
+                            <small class="form-text text-muted">店铺ID将用于系统内部识别，建议使用英文字母和数字组合</small>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="agree" name="agree" required>
+                                <label class="form-check-label" for="agree">
+                                    我已阅读并同意 <a href="#" class="text-primary">用户协议</a> 和 <a href="#" class="text-primary">隐私政策</a>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-user-plus me-2"></i>立即注册
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <hr class="my-4">
+                    
+                    <div class="text-center">
+                        <p class="mb-2">已有账户？</p>
+                        <a href="{{ url_for('auth.login') }}" class="btn btn-outline-primary">
+                            <i class="fas fa-sign-in-alt me-2"></i>立即登录
+                        </a>
+                    </div>
+                    
+                    <div class="text-center mt-3">
+                        <small class="text-muted">
+                            <a href="{{ url_for('auth.home') }}" class="text-decoration-none">
+                                <i class="fas fa-arrow-left me-1"></i>返回首页
+                            </a>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+}
+
+.card {
+    backdrop-filter: blur(10px);
+    background-color: rgba(255, 255, 255, 0.95);
+}
+
+.input-group-text {
+    background-color: #f8f9fa;
+    border-right: none;
+}
+
+.form-control {
+    border-left: none;
+}
+
+.form-control:focus {
+    border-color: #409EFF;
+    box-shadow: 0 0 0 0.2rem rgba(64, 158, 255, 0.25);
+}
+
+.form-check-input:checked {
+    background-color: #409EFF;
+    border-color: #409EFF;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card {
+    animation: slideInUp 0.6s ease-out;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// 切换密码显示/隐藏
+function togglePassword(fieldId) {
+    const passwordInput = document.getElementById(fieldId);
+    const toggleIcon = document.getElementById(fieldId + 'Toggle');
+    
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        toggleIcon.classList.remove('fa-eye');
+        toggleIcon.classList.add('fa-eye-slash');
+    } else {
+        passwordInput.type = 'password';
+        toggleIcon.classList.remove('fa-eye-slash');
+        toggleIcon.classList.add('fa-eye');
+    }
+}
+
+// 表单验证
+document.getElementById('registerForm').addEventListener('submit', function(e) {
+    const username = document.getElementById('username').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    const brandName = document.getElementById('brand_name').value.trim();
+    const storeName = document.getElementById('store_name').value.trim();
+    const storeId = document.getElementById('store_id').value.trim();
+    const agree = document.getElementById('agree').checked;
+    
+    // 检查必填字段
+    if (!username || !phone || !password || !confirmPassword || !brandName || !storeName || !storeId) {
+        e.preventDefault();
+        alert('请填写所有必填字段');
+        return false;
+    }
+    
+    // 检查用户名长度
+    if (username.length < 3 || username.length > 20) {
+        e.preventDefault();
+        alert('用户名长度应在3-20个字符之间');
+        return false;
+    }
+    
+    // 检查手机号格式
+    const phoneRegex = /^1[3-9]\d{9}$/;
+    if (!phoneRegex.test(phone)) {
+        e.preventDefault();
+        alert('请输入正确的手机号码');
+        return false;
+    }
+    
+    // 检查密码长度
+    if (password.length < 6 || password.length > 20) {
+        e.preventDefault();
+        alert('密码长度应在6-20个字符之间');
+        return false;
+    }
+    
+    // 检查密码一致性
+    if (password !== confirmPassword) {
+        e.preventDefault();
+        alert('两次输入的密码不一致');
+        return false;
+    }
+    
+    // 检查店铺ID格式
+    const storeIdRegex = /^[a-zA-Z0-9_-]+$/;
+    if (!storeIdRegex.test(storeId)) {
+        e.preventDefault();
+        alert('店铺ID只能包含字母、数字、下划线和连字符');
+        return false;
+    }
+    
+    // 检查协议同意
+    if (!agree) {
+        e.preventDefault();
+        alert('请先阅读并同意用户协议和隐私政策');
+        return false;
+    }
+});
+
+// 实时密码匹配检查
+document.getElementById('confirmPassword').addEventListener('input', function() {
+    const password = document.getElementById('password').value;
+    const confirmPassword = this.value;
+    
+    if (password && confirmPassword) {
+        if (password === confirmPassword) {
+            this.classList.remove('is-invalid');
+            this.classList.add('is-valid');
+        } else {
+            this.classList.remove('is-valid');
+            this.classList.add('is-invalid');
+        }
+    } else {
+        this.classList.remove('is-valid', 'is-invalid');
+    }
+});
+
+// 实时手机号验证
+document.getElementById('phone').addEventListener('input', function() {
+    const phone = this.value.trim();
+    const phoneRegex = /^1[3-9]\d{9}$/;
+    
+    if (phone) {
+        if (phoneRegex.test(phone)) {
+            this.classList.remove('is-invalid');
+            this.classList.add('is-valid');
+        } else {
+            this.classList.remove('is-valid');
+            this.classList.add('is-invalid');
+        }
+    } else {
+        this.classList.remove('is-valid', 'is-invalid');
+    }
+});
+</script>
+{% endblock %}

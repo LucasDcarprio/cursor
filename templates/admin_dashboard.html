@@ -1,0 +1,384 @@
+{% extends "admin_layout.html" %}
+
+{% block title %}管理后台 - 泓枢智创{% endblock %}
+
+{% block admin_content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">仪表板</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="location.reload()">
+                <i class="fas fa-sync-alt"></i> 刷新
+            </button>
+        </div>
+        <div class="dropdown">
+            <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                <i class="fas fa-plus"></i> 快速操作
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="{{ url_for('admin.add_store') }}">
+                    <i class="fas fa-store me-2"></i>添加门店
+                </a></li>
+                <li><a class="dropdown-item" href="#" onclick="showDataImport()">
+                    <i class="fas fa-upload me-2"></i>导入数据
+                </a></li>
+                <li><a class="dropdown-item" href="#" onclick="showDataExport()">
+                    <i class="fas fa-download me-2"></i>导出数据
+                </a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- 统计卡片 -->
+<div class="row g-4 mb-4">
+    {% if current_user.is_super() %}
+    <div class="col-xl-3 col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-users fa-2x text-primary"></i>
+                    </div>
+                    <div class="ms-3">
+                        <div class="text-muted small">总用户数</div>
+                        <div class="h4 mb-0">{{ stats.total_users or 0 }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <div class="col-xl-3 col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-store fa-2x text-success"></i>
+                    </div>
+                    <div class="ms-3">
+                        <div class="text-muted small">门店数量</div>
+                        <div class="h4 mb-0">{{ stats.total_stores or 0 }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-box fa-2x text-warning"></i>
+                    </div>
+                    <div class="ms-3">
+                        <div class="text-muted small">商品数量</div>
+                        <div class="h4 mb-0">{{ stats.total_products or 0 }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-shopping-cart fa-2x text-info"></i>
+                    </div>
+                    <div class="ms-3">
+                        <div class="text-muted small">总订单数</div>
+                        <div class="h4 mb-0">{{ stats.total_orders or 0 }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-clock fa-2x text-danger"></i>
+                    </div>
+                    <div class="ms-3">
+                        <div class="text-muted small">活跃订单</div>
+                        <div class="h4 mb-0">{{ stats.active_orders or 0 }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- 最近订单 -->
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">最近订单</h5>
+                    <a href="{{ url_for('admin.data2') }}" class="btn btn-sm btn-outline-primary">
+                        查看全部 <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                {% if recent_orders %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>订单编号</th>
+                                <th>商品名称</th>
+                                <th>门店</th>
+                                <th>状态</th>
+                                <th>创建时间</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in recent_orders %}
+                            <tr>
+                                <td>
+                                    <span class="text-muted small">{{ order.order_number or 'N/A' }}</span>
+                                </td>
+                                <td>
+                                    <div class="fw-medium">{{ order.product_name or 'N/A' }}</div>
+                                    <small class="text-muted">{{ order.sku_code or '' }}</small>
+                                </td>
+                                <td>{{ order.store_id or 'N/A' }}</td>
+                                <td>
+                                    {% set status_class = {
+                                        'pending': 'warning',
+                                        'processing': 'info',
+                                        'shipped': 'primary',
+                                        'delivered': 'success',
+                                        'completed': 'success',
+                                        'cancelled': 'secondary',
+                                        'failed': 'danger'
+                                    } %}
+                                    <span class="badge bg-{{ status_class.get(order.order_status, 'secondary') }}">
+                                        {{ order.get_status_display() }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <small class="text-muted">
+                                        {{ order.created_at.strftime('%m-%d %H:%M') if order.created_at else 'N/A' }}
+                                    </small>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">暂无订单数据</p>
+                    <a href="{{ url_for('admin.data2') }}" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>创建订单
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- 快速操作和系统信息 -->
+    <div class="col-lg-4">
+        <!-- 快速操作 -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">快速操作</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('admin.add_store') }}" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-store me-2"></i>添加门店
+                    </a>
+                    <a href="{{ url_for('admin.data') }}" class="btn btn-outline-success btn-sm">
+                        <i class="fas fa-box me-2"></i>管理商品
+                    </a>
+                    <a href="{{ url_for('admin.data2') }}" class="btn btn-outline-info btn-sm">
+                        <i class="fas fa-shopping-cart me-2"></i>采购订单
+                    </a>
+                    <button class="btn btn-outline-warning btn-sm" onclick="showDataExport()">
+                        <i class="fas fa-download me-2"></i>导出数据
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm" onclick="showApiDocs()">
+                        <i class="fas fa-code me-2"></i>API文档
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 用户信息 -->
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">用户信息</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-user-circle fa-3x text-primary"></i>
+                    </div>
+                    <div class="ms-3">
+                        <div class="fw-medium">{{ current_user.username }}</div>
+                        <small class="text-muted">{{ current_user.brand_name }}</small>
+                    </div>
+                </div>
+                
+                <div class="row g-2 text-center">
+                    <div class="col-6">
+                        <div class="border rounded p-2">
+                            <div class="small text-muted">角色</div>
+                            <div class="fw-medium">
+                                {% if current_user.role == 'super' %}
+                                    <span class="text-danger">超级管理员</span>
+                                {% elif current_user.role == 'admin' %}
+                                    <span class="text-primary">管理员</span>
+                                {% else %}
+                                    <span class="text-secondary">用户</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="border rounded p-2">
+                            <div class="small text-muted">最大门店</div>
+                            <div class="fw-medium">{{ current_user.max_stores or 'N/A' }}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                {% if current_user.expire_time %}
+                <div class="mt-3">
+                    <div class="small text-muted">账户到期时间</div>
+                    <div class="fw-medium">
+                        {{ current_user.expire_time.strftime('%Y年%m月%d日') }}
+                    </div>
+                    {% if current_user.is_expired() %}
+                        <small class="text-danger">账户已过期</small>
+                    {% else %}
+                        <small class="text-success">账户有效</small>
+                    {% endif %}
+                </div>
+                {% endif %}
+                
+                <div class="mt-3">
+                    <a href="{{ url_for('auth.profile') }}" class="btn btn-outline-primary btn-sm w-100">
+                        <i class="fas fa-edit me-2"></i>编辑资料
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 系统状态 -->
+{% if current_user.is_super() %}
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">系统状态</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <i class="fas fa-server fa-2x text-success mb-2"></i>
+                            <div class="small text-muted">服务状态</div>
+                            <div class="text-success fw-medium">正常</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <i class="fas fa-database fa-2x text-info mb-2"></i>
+                            <div class="small text-muted">数据库</div>
+                            <div class="text-info fw-medium">SQLite</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <i class="fab fa-alipay fa-2x text-warning mb-2"></i>
+                            <div class="small text-muted">阿里巴巴API</div>
+                            <div class="text-warning fw-medium">已配置</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <i class="fas fa-chart-line fa-2x text-primary mb-2"></i>
+                            <div class="small text-muted">版本</div>
+                            <div class="text-primary fw-medium">v1.0.0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<style>
+.card {
+    transition: transform 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.stats-card {
+    border-left: 4px solid var(--bs-primary);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.card {
+    animation: fadeIn 0.6s ease-out;
+}
+
+.table th {
+    font-weight: 600;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+</style>
+
+<script>
+// 页面加载动画
+document.addEventListener('DOMContentLoaded', function() {
+    // 数字动画效果
+    const numbers = document.querySelectorAll('.h4');
+    numbers.forEach(function(number) {
+        const target = parseInt(number.textContent);
+        let current = 0;
+        const increment = target / 20;
+        const timer = setInterval(function() {
+            current += increment;
+            if (current >= target) {
+                number.textContent = target;
+                clearInterval(timer);
+            } else {
+                number.textContent = Math.floor(current);
+            }
+        }, 50);
+    });
+});
+
+// 定时刷新统计数据
+setInterval(function() {
+    // 这里可以添加AJAX请求来更新统计数据
+    console.log('刷新统计数据...');
+}, 30000); // 每30秒刷新一次
+</script>
+{% endblock %}
