@@ -1,0 +1,262 @@
+{% extends "base.html" %}
+
+{% block title %}泓枢智创 - 智慧采购管理系统{% endblock %}
+
+{% block content %}
+<!-- 头部介绍区域 -->
+<div class="hero-section bg-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-4">智慧采购管理系统</h1>
+                <p class="lead mb-4">专为零售连锁企业打造的SaaS采购管理平台，深度集成阿里巴巴1688，实现采购全流程自动化管理。</p>
+                <div class="d-flex gap-3">
+                    {% if not current_user.is_authenticated %}
+                        <a href="{{ url_for('auth.register') }}" class="btn btn-light btn-lg">立即注册</a>
+                        <a href="{{ url_for('auth.login') }}" class="btn btn-outline-light btn-lg">用户登录</a>
+                    {% else %}
+                        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-light btn-lg">进入管理后台</a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="text-center">
+                    <i class="fas fa-shopping-cart display-1 mb-3" style="opacity: 0.8;"></i>
+                    <h4>高效 · 智能 · 便捷</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 核心功能介绍 -->
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h2 class="display-5 fw-bold mb-3">核心功能</h2>
+        <p class="lead text-muted">全方位的采购管理解决方案</p>
+    </div>
+    
+    <div class="row g-4">
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 text-center border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <i class="fas fa-users fa-3x text-primary"></i>
+                    </div>
+                    <h5 class="card-title">多租户管理</h5>
+                    <p class="card-text text-muted">支持多企业、多门店独立使用，数据完全隔离，权限精确控制。</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 text-center border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <i class="fas fa-link fa-3x text-success"></i>
+                    </div>
+                    <h5 class="card-title">深度集成</h5>
+                    <p class="card-text text-muted">与阿里巴巴1688平台API深度对接，自动化下单、支付、物流跟踪。</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 text-center border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <i class="fas fa-chart-line fa-3x text-warning"></i>
+                    </div>
+                    <h5 class="card-title">数据分析</h5>
+                    <p class="card-text text-muted">全面的采购数据分析和决策支持，让每一次采购都更智能。</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 text-center border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <i class="fas fa-mobile-alt fa-3x text-info"></i>
+                    </div>
+                    <h5 class="card-title">移动优先</h5>
+                    <p class="card-text text-muted">响应式设计，完美支持手机、平板等移动设备操作。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 产品优势 -->
+<div class="bg-light py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h2 class="display-6 fw-bold mb-4">为什么选择我们？</h2>
+                <div class="row g-3">
+                    <div class="col-12">
+                        <div class="d-flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-check-circle text-success fa-lg mt-1"></i>
+                            </div>
+                            <div class="ms-3">
+                                <h6 class="mb-1">提升效率90%</h6>
+                                <p class="text-muted mb-0">自动化采购流程，减少人工操作，大幅提升工作效率。</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-12">
+                        <div class="d-flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-check-circle text-success fa-lg mt-1"></i>
+                            </div>
+                            <div class="ms-3">
+                                <h6 class="mb-1">降低成本30%</h6>
+                                <p class="text-muted mb-0">统一采购管理，优化供应链，有效控制采购成本。</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-12">
+                        <div class="d-flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-check-circle text-success fa-lg mt-1"></i>
+                            </div>
+                            <div class="ms-3">
+                                <h6 class="mb-1">数据驱动决策</h6>
+                                <p class="text-muted mb-0">全面的数据分析，为采购决策提供科学依据。</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-12">
+                        <div class="d-flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-check-circle text-success fa-lg mt-1"></i>
+                            </div>
+                            <div class="ms-3">
+                                <h6 class="mb-1">快速部署</h6>
+                                <p class="text-muted mb-0">SaaS模式，无需本地部署，注册即用，快速上线。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-6">
+                <div class="text-center">
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <div class="card border-0 shadow-sm text-center">
+                                <div class="card-body">
+                                    <h3 class="text-primary fw-bold">1000+</h3>
+                                    <p class="text-muted mb-0">企业用户</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="card border-0 shadow-sm text-center">
+                                <div class="card-body">
+                                    <h3 class="text-success fw-bold">10万+</h3>
+                                    <p class="text-muted mb-0">门店管理</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="card border-0 shadow-sm text-center">
+                                <div class="card-body">
+                                    <h3 class="text-warning fw-bold">500万+</h3>
+                                    <p class="text-muted mb-0">订单处理</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="card border-0 shadow-sm text-center">
+                                <div class="card-body">
+                                    <h3 class="text-info fw-bold">99.9%</h3>
+                                    <p class="text-muted mb-0">系统稳定性</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 适用行业 -->
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h2 class="display-6 fw-bold mb-3">适用行业</h2>
+        <p class="lead text-muted">广泛服务于各类零售连锁企业</p>
+    </div>
+    
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="text-center">
+                <i class="fas fa-store fa-3x text-primary mb-3"></i>
+                <h5>零售连锁</h5>
+                <p class="text-muted">便利店、超市、专业店等各类零售连锁企业采购管理。</p>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="text-center">
+                <i class="fas fa-shopping-basket fa-3x text-success mb-3"></i>
+                <h5>商超百货</h5>
+                <p class="text-muted">大型商场、百货公司、购物中心的统一采购管理。</p>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="text-center">
+                <i class="fas fa-industry fa-3x text-warning mb-3"></i>
+                <h5>制造贸易</h5>
+                <p class="text-muted">制造业、批发贸易企业的原材料和商品采购管理。</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 行动号召 -->
+<div class="bg-primary text-white py-5">
+    <div class="container text-center">
+        <h2 class="display-6 fw-bold mb-3">开始您的智慧采购之旅</h2>
+        <p class="lead mb-4">立即注册，体验高效便捷的采购管理系统</p>
+        {% if not current_user.is_authenticated %}
+            <a href="{{ url_for('auth.register') }}" class="btn btn-light btn-lg me-3">免费注册</a>
+            <a href="{{ url_for('auth.login') }}" class="btn btn-outline-light btn-lg">立即登录</a>
+        {% else %}
+            <a href="{{ url_for('admin.dashboard') }}" class="btn btn-light btn-lg">进入管理后台</a>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.hero-section {
+    background: linear-gradient(135deg, #409EFF 0%, #66b1ff 100%);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    transition: transform 0.3s ease;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card {
+    animation: fadeInUp 0.6s ease-out;
+}
+</style>
+{% endblock %}
