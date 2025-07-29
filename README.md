@@ -1,2 +1,1 @@
-# cursor
-for cursor
+# 开发说明文档
