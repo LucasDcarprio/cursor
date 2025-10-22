@@ -1,3 +1,18 @@
+"""
+阿里巴巴 1688 平台 API 集成模块
+Alibaba 1688 Platform API Integration Module
+
+提供与阿里巴巴 1688 平台的完整 API 集成功能，包括：
+- 商品信息查询
+- 订单创建和管理
+- 支付处理
+- 物流跟踪
+- 优惠券管理
+
+作者：泓枢智创团队
+版本：1.0.0
+"""
+
 import requests
 import time
 import json
@@ -8,7 +23,8 @@ import config
 import openpyxl
 import re
 import concurrent.futures
-import os,logging
+import os
+import logging
 import csv
 import sqlite3
 from flask import session, has_request_context

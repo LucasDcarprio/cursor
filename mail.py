@@ -1,3 +1,16 @@
+"""
+邮件服务模块
+Email Service Module
+
+提供系统邮件发送功能，包括：
+- 验证码发送
+- 通知邮件
+- 系统告警邮件
+
+作者：泓枢智创团队
+版本：1.0.0
+"""
+
 import smtplib
 import time
 from email.mime.text import MIMEText
